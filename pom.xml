@@ -32,17 +32,35 @@
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
 
+ 		<dependency>
+			<groupId>it.smartcommunitylab</groupId>
+			<artifactId>aac.client</artifactId>
+			<version>2.0.1</version>
+		</dependency>
+
+		<!-- <dependency>
+			<groupId>eu.trentorise.smartcampus</groupId>
+			<artifactId>profileservice.client</artifactId>
+			<version>2.2</version>
+		</dependency> -->
+
+		<!-- version required by profileservice -->
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.5.3</version><!--$NO-MVN-MAN-VER$ -->
+		</dependency>
+
 		<!-- DB DRIVERS -->
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
-			<!-- <scope>test</scope> -->
 		</dependency>
 
 		<dependency>
 			<groupId>com.microsoft.sqlserver</groupId>
 			<artifactId>mssql-jdbc</artifactId>
-			<version>6.4.0.jre8</version>
+			<version>6.4.0.jre8</version><!--$NO-MVN-MAN-VER$ -->
 		</dependency>
 
 

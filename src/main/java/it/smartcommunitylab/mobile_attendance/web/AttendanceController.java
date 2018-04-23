@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import it.smartcommunitylab.mobile_attendance.model.Attendance;
 import it.smartcommunitylab.mobile_attendance.service.AttendanceService;
 
-@RestController()
+@RestController
 public class AttendanceController {
 
     @Autowired
