@@ -67,7 +67,8 @@ public class AACAuthenticationInterceptor extends HandlerInterceptorAdapter {
             } else if (!hasAttendanceScope(getAction(request), token)) {
                 response.sendError(HttpServletResponse.SC_FORBIDDEN,
                         "not the right security scope");
-                logger.warn("Token has not scope: {}", readAttendanceScopes);
+                logger.warn("Token has not scope: {}", getAction(request) == Action.READ
+                        ? readAttendanceScopes : writeAttendanceScopes);
                 passRequest = false;
             } else {
                 SecurityContextHolder.getContext()
