@@ -2,4 +2,4 @@
 Application for FBK attendance registration
 
 
-web instruction [here](web/README.md) 
+web instructions [here](web/README.md) 
