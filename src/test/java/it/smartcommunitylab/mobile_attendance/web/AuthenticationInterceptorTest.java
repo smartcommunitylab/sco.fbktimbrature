@@ -27,7 +27,7 @@ import it.smartcommunitylab.mobile_attendance.service.AttendanceService;
 @WebMvcTest(AttendanceController.class)
 @ActiveProfiles(profiles = {"sec"})
 @EnableSpringDataWebSupport // permits correct instantiation of pageable
-@TestPropertySource(properties = {"aac.attendanceScope=ATTENDANCE.SCOPE"})
+@TestPropertySource(properties = {"aac.attendanceScopes.read=ATTENDANCE.SCOPE"})
 public class AuthenticationInterceptorTest {
 
     @Autowired
