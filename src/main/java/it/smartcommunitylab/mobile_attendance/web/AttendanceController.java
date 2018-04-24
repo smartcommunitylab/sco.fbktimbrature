@@ -8,8 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,22 +30,24 @@ public class AttendanceController {
         return "Up and Running!!!!!";
     }
 
-    @PostMapping(value = "/api/attendance/{account}")
-    public void store(@PathVariable String account) {
+    @PostMapping(value = "/api/attendance")
+    public void store() {
         Date timestamp = new Date();
+        String account = SecurityContextHolder.getContext().getAuthentication().getName();
         attendanceSrv.store(account, timestamp);
         logger.info("New attendance for login {} at {}", account, timestamp);
 
     }
 
 
-    @GetMapping(value = "/api/attendance/{account}")
-    public Page<Attendance> read(@PathVariable String account,
+    @GetMapping(value = "/api/attendance")
+    public Page<Attendance> read(
             @RequestParam(required = false, name = "fromTs") @DateTimeFormat(
                     pattern = "yyyy-MM-dd'T'HH:mm:ss") Date fromTimestamp,
             @RequestParam(required = false, name = "toTs") @DateTimeFormat(
                     pattern = "yyyy-MM-dd'T'HH:mm:ss") Date toTimestamp,
             Pageable pageRequest) {
+        String account = SecurityContextHolder.getContext().getAuthentication().getName();
         return attendanceSrv.readByRange(account, fromTimestamp, toTimestamp, pageRequest);
     }
 

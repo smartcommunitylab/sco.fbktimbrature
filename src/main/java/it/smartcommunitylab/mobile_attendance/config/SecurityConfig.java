@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -37,7 +38,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
     }
 
     @Bean
-    public AACAuthenticationInterceptor authInterceptor() {
+    public HandlerInterceptor authInterceptor() {
         return new AACAuthenticationInterceptor();
     }
 
@@ -48,8 +49,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests().antMatchers("/**").permitAll().and().anonymous();
-        super.configure(http);
+        http.antMatcher("/api/**").anonymous().and().csrf().disable();
     }
 
     public String getAacServiceUrl() {

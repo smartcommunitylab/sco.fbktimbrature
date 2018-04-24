@@ -56,13 +56,13 @@ public class AuthenticationInterceptorTest {
                     }
                 });
 
-        mvc.perform(get("/api/attendance/JEEG").header("Authorization", "Bearer MY_VALID_TOKEN"))
+        mvc.perform(get("/api/attendance").header("Authorization", "Bearer MY_VALID_TOKEN"))
                 .andExpect(status().isOk());
     }
 
     @Test
     public void missing_token() throws Exception {
-        mvc.perform(get("/api/attendance/JEEG")).andExpect(status().isUnauthorized());
+        mvc.perform(get("/api/attendance")).andExpect(status().isUnauthorized());
     }
 
 
@@ -78,7 +78,7 @@ public class AuthenticationInterceptorTest {
                     }
                 });
 
-        mvc.perform(get("/api/attendance/JEEG").header("Authorization", "Bearer MY_VALID_TOKEN"))
+        mvc.perform(get("/api/attendance").header("Authorization", "Bearer MY_VALID_TOKEN"))
                 .andExpect(status().isForbidden());
     }
 
@@ -93,7 +93,7 @@ public class AuthenticationInterceptorTest {
                     }
                 });
 
-        mvc.perform(get("/api/attendance/JEEG").header("Authorization", "Bearer MY_VALID_TOKEN"))
+        mvc.perform(get("/api/attendance").header("Authorization", "Bearer MY_VALID_TOKEN"))
                 .andExpect(status().isForbidden());
     }
 
@@ -110,7 +110,7 @@ public class AuthenticationInterceptorTest {
                     }
                 });
 
-        mvc.perform(get("/api/attendance/JEEG").header("Authorization", "Bearer MY_VALID_TOKEN"))
+        mvc.perform(get("/api/attendance").header("Authorization", "Bearer MY_VALID_TOKEN"))
                 .andExpect(status().isForbidden());
     }
 }

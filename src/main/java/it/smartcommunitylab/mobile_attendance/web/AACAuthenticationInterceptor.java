@@ -1,5 +1,7 @@
 package it.smartcommunitylab.mobile_attendance.web;
 
+import java.io.IOException;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -36,21 +38,29 @@ public class AACAuthenticationInterceptor extends HandlerInterceptorAdapter {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response,
-            Object handler) throws Exception {
+            Object handler) throws IOException {
 
 
         String token = extractToken(request);
         boolean passRequest = true;
         if (token != null) {
-            AccountProfile profile = aacProfileService.findAccountProfile(token);
-            String email = profile.getAttribute("google", "email");
+            AccountProfile profile = null;
+            String email = null;
+            try {
+                profile = aacProfileService.findAccountProfile(token);
+                email = profile.getAttribute("google", "email");
+            } catch (SecurityException | AACException e) {
+                logger.warn("Exception in findAccountProfile of aacProfileService", e.getMessage());
+            }
 
             if (!isFbkEmail(email)) {
                 response.sendError(HttpServletResponse.SC_FORBIDDEN, "not a FBK account");
+                logger.warn("Try to use an account not FBK: {}", email);
                 passRequest = false;
             } else if (!hasAttendanceScope(token)) {
                 response.sendError(HttpServletResponse.SC_FORBIDDEN,
                         "not the right security scope");
+                logger.warn("Token has not scope: {}", attendanceScope);
                 passRequest = false;
             } else {
                 SecurityContextHolder.getContext()
@@ -59,6 +69,7 @@ public class AACAuthenticationInterceptor extends HandlerInterceptorAdapter {
         } else {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED,
                     "request should be authenticated");
+            logger.warn("Request without token");
             passRequest = false;
         }
 
