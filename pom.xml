@@ -38,12 +38,6 @@
 			<version>2.0.1</version>
 		</dependency>
 
-		<!-- <dependency>
-			<groupId>eu.trentorise.smartcampus</groupId>
-			<artifactId>profileservice.client</artifactId>
-			<version>2.2</version>
-		</dependency> -->
-
 		<!-- version required by profileservice -->
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
@@ -51,6 +45,20 @@
 			<version>4.5.3</version><!--$NO-MVN-MAN-VER$ -->
 		</dependency>
 
+
+		<!-- SWAGGER DOCUMENTATION -->
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger2</artifactId>
+			<version>2.8.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger-ui</artifactId>
+			<version>2.8.0</version>
+		</dependency>
+		
 		<!-- DB DRIVERS -->
 		<dependency>
 			<groupId>com.h2database</groupId>

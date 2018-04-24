@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import it.smartcommunitylab.mobile_attendance.model.Attendance;
 import it.smartcommunitylab.mobile_attendance.service.AttendanceService;
 
@@ -31,6 +34,7 @@ public class AttendanceController {
     }
 
     @PostMapping(value = "/api/attendance")
+    @ApiOperation("Attendance action")
     public void store() {
         Date timestamp = new Date();
         String account = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -41,6 +45,12 @@ public class AttendanceController {
 
 
     @GetMapping(value = "/api/attendance")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "page", dataType = "integer", paramType = "query",
+                    value = "Page to return (zero-based)"),
+            @ApiImplicitParam(name = "size", dataType = "integer", paramType = "query",
+                    value = "Number of Records per page."),})
+    @ApiOperation("Read attendances")
     public Page<Attendance> read(
             @RequestParam(required = false, name = "fromTs") @DateTimeFormat(
                     pattern = "yyyy-MM-dd'T'HH:mm:ss") Date fromTimestamp,
