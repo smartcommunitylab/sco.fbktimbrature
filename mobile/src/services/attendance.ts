@@ -51,7 +51,7 @@ export class AttendanceService {
       options.headers.append('Authorization', `Bearer ${token}`);
       const fromStr = new Date(from).toISOString();
       const toStr = new Date(to).toISOString();
-      return this.http.get(`${this.endpoint}?fromTs=${fromStr}&toTs=${toStr}&size=200`, options).map(res => {
+      return this.http.get(`${this.endpoint}?fromTs=${fromStr}&toTs=${toStr}&size=300`, options).map(res => {
         return res.json().content
         // const arr = [];
         // let fm = moment(from);

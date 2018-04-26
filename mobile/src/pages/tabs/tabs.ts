@@ -19,8 +19,8 @@ export class TabsPage {
   tab3Title = '';
 
   constructor(private translate: TranslateService) {
-    this.tab1Title = translate.instant('tab_home');
-    this.tab2Title = translate.instant('tab_history');
-    this.tab3Title = translate.instant('tab_settings');
+    this.tab1Title = translate.instant('tab_home').toUpperCase();
+    this.tab2Title = translate.instant('tab_history').toUpperCase();
+    this.tab3Title = translate.instant('tab_settings').toUpperCase();
   }
 }

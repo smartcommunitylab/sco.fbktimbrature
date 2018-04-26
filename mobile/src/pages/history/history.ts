@@ -13,6 +13,7 @@ import * as moment from 'moment';
 export class HistoryPage {
 
   from: number;
+  to: number;
   records: AttendanceRecord[] = null;
   groups: any[] = null;
 
@@ -23,11 +24,32 @@ export class HistoryPage {
 
   ionViewDidLoad(){
     const toMoment = moment().startOf('day');
-    const to = toMoment.toDate().getTime();
-    this.from = toMoment.subtract(7, 'days').toDate().getTime();
-    this.update(this.from, to);
+    this.to = toMoment.toDate().getTime();
+    this.from = toMoment.startOf('month').toDate().getTime();
+    this.records = null;
+    this.groups = null;
+    this.update(this.from, this.to);
+  }  
+
+  nextMonth() {
+    const fromMoment = moment(this.from).add(1, 'month');
+    if (fromMoment.isAfter(moment())) return;
+    this.from = fromMoment.toDate().getTime();
+    this.to = fromMoment.endOf('month').toDate().getTime();
+    this.records = null;
+    this.groups = null;
+    this.update(this.from, this.to);
   }
-  
+
+
+  prevMonth() {
+    const fromMoment = moment(this.from).subtract(1, 'month');
+    this.from = fromMoment.toDate().getTime();
+    this.to = fromMoment.endOf('month').toDate().getTime();
+    this.records = null;
+    this.groups = null;
+    this.update(this.from, this.to);
+  }
 
   update(from: number, to: number, infiniteScroll?: InfiniteScroll) {
     this.auth.getAccessToken().then((tokenData) => {
@@ -65,7 +87,7 @@ export class HistoryPage {
     while(fm.isBefore(tm)) {
       const str = tm.format('DD/MM/YYYY');
       if (tm.day() > 0 && tm.day() < 6) {
-        res.push({date: str, dayRecords: map[str]});
+        res.push({date: tm.toDate(), dayRecords: map[str]});
       }
       tm = tm.subtract(1, 'day');
     }
@@ -73,11 +95,11 @@ export class HistoryPage {
     else this.groups = this.groups.concat(res);
   }
 
-  doInfinite(infiniteScroll) {
-    console.log('Begin async operation');
+  // doInfinite(infiniteScroll) {
+  //   console.log('Begin async operation');
 
-    const fm = moment(this.from).subtract(7, 'days').toDate().getTime();
-    this.update(fm, this.from, infiniteScroll);
-    this.from = fm;
-  }
+  //   const fm = moment(this.from).subtract(7, 'days').toDate().getTime();
+  //   this.update(fm, this.from, infiniteScroll);
+  //   this.from = fm;
+  // }
 }

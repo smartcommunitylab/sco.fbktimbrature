@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { NavController, Platform, ToastController, App, LoadingController } from 'ionic-angular';
-import { AACAuth, ERR_MISSING_PROVIDER } from '../../services/aac';
+import { AACAuth, ERR_MISSING_PROVIDER, BasicProfileData } from '../../services/aac';
 import { LoginPage } from '../login/login';
 import { TranslateService } from '@ngx-translate/core';
 import { LocationChecker } from '../../services/location';
@@ -13,6 +13,7 @@ import { AttendanceService, AttendanceRecord } from '../../services/attendance';
 export class HomePage {
   now: Date;
   records: AttendanceRecord[] = null;
+  profile: BasicProfileData;
 
   constructor(
     public appCtrl: App, public navCtrl: NavController, 
@@ -24,6 +25,8 @@ export class HomePage {
   ionViewDidLoad(){
     this.now = new Date();
     this.update();
+    this.profile = this.auth.getStoredBasicProfile();
+    setInterval(()=> this.now = new Date(), 60000);
   }
 
   update() {

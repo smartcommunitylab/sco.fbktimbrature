@@ -16,8 +16,8 @@ export class MyApp {
   rootPage: any = null;
 
   readonly config : AACAuthConfig = {
-    client_id: '',
-    client_secret: '',
+    client_id: '7b4f9b2a-71f6-412d-93e6-030c14910083',
+    client_secret: 'e8a302da-f9dc-4515-ac91-abf7940d58ad',
     redirect_uri: 'https://tn.smartcommunitylab.it/timbrature/oauth',
     scopes: 'profile.basicprofile.me profile.accountprofile.me'
   }

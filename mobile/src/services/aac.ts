@@ -159,7 +159,12 @@ export class AACAuth {
      * @param provider 
      */
     login(provider: string): Promise<AACTokenData> {
-        return this.auth(provider, this.clientConfig);
+        return this.auth(provider, this.clientConfig).then(tokenData => {
+            this.getBasicProfile().then(profile => {
+                window.localStorage._aac_profile = JSON.stringify(profile);
+            });
+            return tokenData;
+        });
     }
 
     /**
@@ -175,6 +180,7 @@ export class AACAuth {
     logout(): Promise<any> {
         window.localStorage._aac_authdata = '';
         window.localStorage._aac_provider = '';
+        window.localStorage._aac_profile = '';
         if (this.clientConfig) {
             this.deferred = new Deferred<AACTokenData>();
             const redirect = this.clientConfig.redirect_uri;
@@ -267,6 +273,11 @@ export class AACAuth {
             }, err => reject(this.err(err)));
         });
     }
+
+    getStoredBasicProfile(): BasicProfileData {
+        return JSON.parse(window.localStorage._aac_profile || '{}');
+    }
+
     getAccountProfile(): Promise<AccountProfileData> {
         return new Promise((resolve, reject) => {
             this.getAccessToken().then(tokenData => {
