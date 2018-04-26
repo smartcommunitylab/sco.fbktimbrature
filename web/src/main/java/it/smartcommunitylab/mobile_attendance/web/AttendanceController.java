@@ -35,11 +35,12 @@ public class AttendanceController {
 
     @PostMapping(value = "/api/attendance")
     @ApiOperation("Attendance action")
-    public void store() {
+    public Attendance store() {
         Date timestamp = new Date();
         String account = SecurityContextHolder.getContext().getAuthentication().getName();
-        attendanceSrv.store(account, timestamp);
+        Attendance stored = attendanceSrv.store(account, timestamp);
         logger.info("New attendance for login {} at {}", account, timestamp);
+        return stored;
 
     }
 
