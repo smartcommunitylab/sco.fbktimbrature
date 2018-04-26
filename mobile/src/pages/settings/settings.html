@@ -1,0 +1,28 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>
+      {{'tab_settings' | translate}}
+    </ion-title>
+    <ion-buttons end>
+        <button ion-button icon-only (click)="logout()">
+          <ion-icon name="log-out"></ion-icon>
+        </button>
+      </ion-buttons>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+    <ion-list>
+
+        <ion-item no-lines>
+            <ion-label>{{'label_notifications_enabled' | translate}}</ion-label>
+            <ion-checkbox color="primary" [(ngModel)]="notificationsEnabled" (ionChange)="toggleNotifications()"></ion-checkbox>
+          </ion-item>
+      
+        <ion-item *ngIf="notificationsEnabled">
+          <ion-label>{{'label_hours' | translate}}</ion-label>
+          <ion-datetime displayFormat="HH:mm" [(ngModel)]="pattern" (ionChange)="updateNotificationsTime()"></ion-datetime>
+        </ion-item>
+      
+      </ion-list>
+</ion-content>

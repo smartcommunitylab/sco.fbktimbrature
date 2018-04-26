@@ -1,0 +1,21 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>Home</ion-title>
+    <ion-buttons end>
+      <button ion-button icon-only (click)="update()">
+        <ion-icon name="refresh"></ion-icon>
+      </button>
+    </ion-buttons>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+  <h2 text-center>{{now | date:'EEEE, dd MMM yyyy'}}</h2>
+  <div text-center><button ion-button (click)="register()">{{'btn_register' | translate}}</button></div>
+
+  <h4 text-center>{{'today_data'| translate}}</h4>
+  <ion-list *ngIf="records">
+    <ion-item *ngFor="let item of records">{{item.timestamp | date:'HH:mm'}}</ion-item>
+  </ion-list>
+  <p text-center class="danger" *ngIf="records != null && records.length == 0">{{'today_data_empty' | translate}}</p>  
+</ion-content>
