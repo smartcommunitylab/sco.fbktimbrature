@@ -123,7 +123,8 @@ export class AACAuth {
                       }
                       console.log(data);
                   }, (err) => {
-                      if (this.deferred) {
+                    console.error('error happened',JSON.stringify(err));
+                    if (this.deferred) {
                           this.deferred.reject(this.err(err));
                       }
                   });
@@ -211,7 +212,7 @@ export class AACAuth {
             redirect_uri: this.clientConfig.redirect_uri,
             scopes: (this.clientConfig.scopes || '') + ' operation.confirmed'
         }
-        return this.auth(provider, config);
+        return this.auth(provider, config, true);
     }
 
     /**
@@ -298,7 +299,7 @@ export class AACAuth {
         return false;
     }
 
-    private auth(provider: string, config: AACAuthConfig): Promise<AACTokenData> {
+    private auth(provider: string, config: AACAuthConfig, inExtBrowser?: boolean): Promise<AACTokenData> {
         if (!provider) return Promise.reject({code: ERR_MISSING_PROVIDER});
 
         this.deferred = new Deferred<AACTokenData>();
@@ -313,11 +314,11 @@ export class AACAuth {
     
         this.browserTab.isAvailable()
         .then((isAvailable: boolean) => {
-        //   if (isAvailable) {
-        //     this.browserTab.openUrl(url);
-        //   } else {
+          if (isAvailable && !inExtBrowser) {
+            this.browserTab.openUrl(url);
+          } else {
             this.iab.create(url, '_system', 'location=0,hideurlbar=1');
-        //   }
+          }
         });
         return this.deferred.promise;
 
