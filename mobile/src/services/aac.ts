@@ -4,6 +4,11 @@ import { Http, RequestOptions, URLSearchParams, Headers } from '@angular/http';
 import { BrowserTab } from '@ionic-native/browser-tab';
 import { InAppBrowser } from '@ionic-native/in-app-browser';
 
+import * as shajs from 'sha.js';
+
+const CHARSET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+const HAS_CRYPTO = typeof window !== 'undefined' && !!(window.crypto as any);
+
 export class AACAuthConfig {
     constructor(
         public client_id: string,
@@ -100,13 +105,14 @@ export class AACAuth {
                 if (codeParam) {
                   if (window['authCode'] && window['authCode'] === codeParam) { return; }
                   window['authCode'] = codeParam;
-                  
+                  const verifier = window['__auth_verifier'];
                   // exchange code for token
                   this.http.post(`${this.endpoint}${this.TOKEN_URL}`, {}, {params: {
                       client_id: this.clientConfig.client_id,
                       client_secret: this.clientConfig.client_secret,
                       redirect_uri: this.clientConfig.redirect_uri,
                       grant_type: 'authorization_code',
+                      code_verifier: verifier,
                       code: codeParam
                   }}).subscribe((res) => {
                       let data: any = res.json();
@@ -307,7 +313,10 @@ export class AACAuth {
         if (!config) {
             this.deferred.reject('Missing configuration');
         }
-        let url = `${this.endpoint}/eauth/authorize/${provider}?client_id=${config.client_id}&grant_type=authorization_code&${(config.scopes ? ('scope='+config.scopes) : '')}&response_type=code&redirect_uri=${config.redirect_uri}`;
+        const verifier = this.createVerifier();
+        const challenge = this.createChallenge(verifier);
+        window['__auth_verifier'] = verifier;
+        let url = `${this.endpoint}/eauth/authorize/${provider}?client_id=${config.client_id}&code_challenge=${challenge}&code_challenge_method=S256&grant_type=authorization_code&${(config.scopes ? ('scope='+config.scopes) : '')}&response_type=code&redirect_uri=${config.redirect_uri}`;
 
         // store provide for future usage
         window.localStorage._aac_provider = provider;
@@ -323,4 +332,38 @@ export class AACAuth {
         return this.deferred.promise;
 
     }
+
+    private createVerifier(): string {
+        return this.cryptoGenerateRandom(32);
+    }
+    private createChallenge(verifier: string): string {
+        return this.base64URLEncode(shajs('sha256').update(verifier).digest('base64'));
+    }
+
+    private base64URLEncode(str: string) {
+        return str
+            .replace(/\+/g, '-')
+            .replace(/\//g, '_')
+            .replace(/=/g, '');
+    }
+    private bufferToString(buffer: Uint8Array) {
+        let state = [];
+        for (let i = 0; i < buffer.byteLength; i += 1) {
+            let index = (buffer[i] % CHARSET.length) | 0;
+            state.push(CHARSET[index]);
+        }
+        return state.join('');
+    }
+    private cryptoGenerateRandom(sizeInBytes = 1) {
+        const buffer = new Uint8Array(sizeInBytes);
+        if (HAS_CRYPTO) {
+            window.crypto.getRandomValues(buffer);
+        } else {
+            // fall back to Math.random() if nothing else is available
+            for (let i = 0; i < sizeInBytes; i += 1) {
+            buffer[i] = Math.random();
+            }
+        }
+        return this.bufferToString(buffer);
+    };
 }
