@@ -1,0 +1,19 @@
+  
+  <ion-content>
+    <h3 text-center>{{'complexity_txt' | translate}}</h3>
+    <ion-grid>
+      <ion-row>
+        <ion-col>{{'complexity_complex' | translate}}</ion-col>
+        <ion-col text-right>{{'complexity_simple' | translate}}</ion-col>
+      </ion-row>
+    </ion-grid>  
+    <rating [(ngModel)]="rate" text-center
+        readOnly="false" 
+        max="4"
+        emptyStarIconName="star-outline" 
+        halfStarIconName="star-half" 
+        starIconName="star" 
+        nullable="false"
+        (ngModelChange)="onModelChange($event)">
+    </rating>
+  </ion-content>

@@ -4,7 +4,7 @@ import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
 import { MyApp } from './app.component';
 
 import { SettingsPage } from '../pages/settings/settings';
-import { HomePage } from '../pages/home/home';
+import { HomePage, RatingModal } from '../pages/home/home';
 import { TabsPage } from '../pages/tabs/tabs';
 
 import { StatusBar } from '@ionic-native/status-bar';
@@ -14,6 +14,7 @@ import { BrowserTab } from '@ionic-native/browser-tab';
 
 import { NetworkInterface } from '@ionic-native/network-interface';
 import { Geolocation } from '@ionic-native/geolocation';
+import { Diagnostic } from '@ionic-native/diagnostic';
 
 import { AACAuth } from '../services/aac';
 import { HttpModule, Http } from '@angular/http';
@@ -26,6 +27,8 @@ import { HistoryPage } from '../pages/history/history';
 import { LocationChecker } from '../services/location';
 import { AttendanceService } from '../services/attendance';
 
+// Import ionic2-rating module
+import { Ionic2RatingModule } from 'ionic2-rating';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -38,7 +41,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     SettingsPage,
     HomePage,
     TabsPage,
-    LoginPage
+    LoginPage,
+    RatingModal
   ],
   imports: [
     BrowserModule,
@@ -48,7 +52,8 @@ export function HttpLoaderFactory(http: HttpClient) {
       provide: TranslateLoader,
       useFactory: HttpLoaderFactory,
       deps: [HttpClient]}}),
-      IonicModule.forRoot(MyApp),      
+    IonicModule.forRoot(MyApp),      
+    Ionic2RatingModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -57,7 +62,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     SettingsPage,
     HomePage,
     TabsPage,
-    LoginPage
+    LoginPage,
+    RatingModal
   ],
   providers: [
     StatusBar,
@@ -69,7 +75,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     NetworkInterface,
     Geolocation,
     LocationChecker,
-    AttendanceService
+    AttendanceService,
+    Diagnostic
   ]
 })
 export class AppModule {}

@@ -8,6 +8,7 @@ import { HomePage } from '../pages/home/home';
 import { AACAuth, AACAuthConfig } from '../services/aac';
 import { LoginPage } from '../pages/login/login';
 import { TranslateService } from '@ngx-translate/core';
+import { LocationChecker } from '../services/location';
 
 @Component({
   templateUrl: 'app.html'
@@ -23,7 +24,7 @@ export class MyApp {
   }
 
 
-  constructor(private platform: Platform, private statusBar: StatusBar, private splashScreen: SplashScreen, private translate: TranslateService, private aac: AACAuth) {
+  constructor(private platform: Platform, private statusBar: StatusBar, private splashScreen: SplashScreen, private translate: TranslateService, private aac: AACAuth, private location: LocationChecker) {
     this.initTranslate();
     const endpoint = 'https://am-test.smartcommunitylab.it/aac';
     // const endpoint = 'http://192.168.31.217:8080/aac';
@@ -36,6 +37,7 @@ export class MyApp {
       statusBar.styleDefault();
       splashScreen.hide();
       this.rootPage = aac.isLoggedIn() ? TabsPage : LoginPage;
+      this.location.startWatch();
     });
   }
 

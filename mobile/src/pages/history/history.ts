@@ -23,7 +23,7 @@ export class HistoryPage {
     public toastCtrl: ToastController, public loadingCtrl: LoadingController) {}
 
   ionViewDidLoad(){
-    const toMoment = moment().startOf('day');
+    const toMoment = moment().subtract(1,'day').endOf('day');
     this.to = toMoment.toDate().getTime();
     this.from = toMoment.startOf('month').toDate().getTime();
     this.records = null;
@@ -86,7 +86,7 @@ export class HistoryPage {
     const res = [];
     while(fm.isBefore(tm)) {
       const str = tm.format('DD/MM/YYYY');
-      if (tm.day() > 0 && tm.day() < 6) {
+      if (tm.day() > 0 && tm.day() < 6 && !tm.isAfter(moment())) {
         res.push({date: tm.toDate(), dayRecords: map[str]});
       }
       tm = tm.subtract(1, 'day');

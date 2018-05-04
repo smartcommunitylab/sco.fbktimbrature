@@ -7,6 +7,7 @@ import { InAppBrowser } from '@ionic-native/in-app-browser';
 
 import { NetworkInterface } from '@ionic-native/network-interface';
 import { Geolocation } from '@ionic-native/geolocation';
+import { Diagnostic } from '@ionic-native/diagnostic';
 
 const ERR_LOCATION = 0;
 const ERR_NETWORK = 1;
@@ -20,7 +21,7 @@ const MAX_DISTANCE = 1;
 
 @Injectable()
 export class LocationChecker {
-    constructor(public network: NetworkInterface, public geo: Geolocation) {}
+    constructor(public network: NetworkInterface, public geo: Geolocation, public diagnose: Diagnostic) {}
 
     checkLocation(): Promise<boolean> {
         return new Promise((resolve, reject) => {
@@ -29,27 +30,24 @@ export class LocationChecker {
           (<any>window).plugins.mocklocationchecker.check((res) => {
             // if disabled, check current location
             if ('true' !== (''+res) && !Array.from(res).some((e:any) => e.info === 'mock-true')) {
-              this.geo.getCurrentPosition({timeout: 30000}).then((pos) => {
+              console.log('Mock verified: ok');
+              const pos: any = Array.from(res).find((e: any) => e.lat && e.long);
+              if (pos) {
+                const dist = this.calculateDistance(pos.lat, TARGET_POSITION[0], pos.long, TARGET_POSITION[1]);
+                if (dist < MAX_DISTANCE) resolve(true);
+                else reject(ERR_MSG[ERR_LOCATION_MISMATCH]);
+                return;
+              }
+              this.geo.getCurrentPosition({timeout: 20000}).then((pos) => {
                 console.log(pos);
                 const dist = this.calculateDistance(pos.coords.latitude, TARGET_POSITION[0], pos.coords.longitude, TARGET_POSITION[1]);
                 if (dist < MAX_DISTANCE) resolve(true);
                 else reject(ERR_MSG[ERR_LOCATION_MISMATCH]);
-                // this.network.getWiFiIPAddress().then(ip => {
-                //   console.log('WIFI', ip);
-                // }); 
-                // this.network.getCarrierIPAddress().then(ip => console.log('Carrier', ip), err => {
-                //   console.error(err);
-                //   reject(ERR_MSG[ERR_NETWORK]);
-                // });
-                // this.network.getIPAddress().then(ip => console.log('IP', ip), err => {
-                //   console.error(err);
-                //   reject(ERR_MSG[ERR_NETWORK]);
-                // });  
               }).catch((err) => {
                 console.error('location err', err);
                 reject(ERR_MSG[ERR_LOCATION])
               });
-            // if enabled, check WiFi network IP
+            // if enabled, return err
             } else {
               reject(ERR_MSG[ERR_MOCK_LOCATION]);
             }
@@ -58,6 +56,18 @@ export class LocationChecker {
             reject(ERR_MSG[ERR_LOCATION]);
           });
         });
+      }
+
+      startWatch() {
+        this.diagnose.requestLocationAuthorization().then((res) => {
+          console.log('geolocation granted: ', res);
+        });
+        // this.geo.watchPosition().subscribe((pos) => {
+        //   console.log(pos);
+        // });
+      }
+      stopWatch() {
+        // this.geo.
       }
 
       private calculateDistance(lat1:number,lat2:number,long1:number,long2:number){

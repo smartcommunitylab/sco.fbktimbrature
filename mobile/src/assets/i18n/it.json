@@ -27,5 +27,8 @@
   "time_label": "Ore",
   "setting_profile": "Profilo",
   "setting_notifications": "Notifiche",
-  "logout": "Log out"
+  "logout": "Log out",
+  "complexity_txt": "Quanto è stato difficile timbrare?",
+  "complexity_simple": "Facile",
+  "complexity_complex": "Difficile"
 }

@@ -1,0 +1,14 @@
+rating-modal {
+    h3 {
+        padding: 0 10px;
+    }
+    rating {
+        ul {
+            padding: 0;
+            margin-top: 20px;
+            ion-icon {
+                font-size: calc(22.5vw - 20px);
+            }
+        }
+    }
+}

@@ -22,6 +22,7 @@ export class AttendanceRecord {
 @Injectable()
 export class AttendanceService {
     readonly endpoint = 'https://attendance.fbk.eu/api/attendance';
+    readonly ratingEndpoint = 'https://attendance.fbk.eu/api/rating';
 
     localNotifications = window['cordova'].plugins.notification.local;
 
@@ -35,6 +36,13 @@ export class AttendanceService {
         this.updateSchedule();
         return res.json()
       });
+    }
+
+    rate(value, token) {
+      const options = new RequestOptions();
+      options.headers = new Headers();
+      options.headers.append('Authorization', `Bearer ${token}`);
+      this.http.post(`${this.ratingEndpoint}`, {value}, options).subscribe(() => console.log('rate success'), (err) => console.error('rate failure', err));
     }
 
     getTodayRecords(token: string): Observable<AttendanceRecord[]> {
@@ -66,6 +74,11 @@ export class AttendanceService {
         // return arr;
       });
     } 
+
+    clearSchedule() {
+      window.localStorage.schedule = '';
+      this.localNotifications.clearAll();
+    }
 
     getCurrentSchedule(): string {
       return window.localStorage.schedule;
@@ -101,10 +114,5 @@ export class AttendanceService {
         const parsed = moment(pattern, 'HH:mm');
         this.scheduleAt(parsed.hours(), parsed.minutes(), moment().endOf('day').toDate());
       } 
-    }
-
-    clearSchedule() {
-      window.localStorage.schedule = '';
-      this.localNotifications.clearAll();
     }
 }

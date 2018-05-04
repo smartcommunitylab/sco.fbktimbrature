@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController, Platform, ToastController, App, LoadingController } from 'ionic-angular';
+import { NavController, Platform, ToastController, App, LoadingController, ModalController, NavParams, ViewController } from 'ionic-angular';
 import { AACAuth, ERR_MISSING_PROVIDER, BasicProfileData } from '../../services/aac';
 import { LoginPage } from '../login/login';
 import { TranslateService } from '@ngx-translate/core';
@@ -19,7 +19,8 @@ export class HomePage {
     public appCtrl: App, public navCtrl: NavController, 
     public auth: AACAuth, public location: LocationChecker, public attendanceService: AttendanceService,
     private platform: Platform, public translate: TranslateService, 
-    public toastCtrl: ToastController, public loadingCtrl: LoadingController) {
+    public toastCtrl: ToastController, public loadingCtrl: LoadingController,
+    public modalCtrl: ModalController) {
   }
 
   ionViewDidLoad(){
@@ -49,6 +50,9 @@ export class HomePage {
   }
 
   register() {
+    // this.showRatingModal();
+    // return;
+
     let loading = this.loadingCtrl.create();
     loading.present();
     this.location.checkLocation()
@@ -60,7 +64,11 @@ export class HomePage {
           loading.present();
           this.attendanceService.registerAttendance(tokenData.access_token).subscribe((res) => {
             loading.dismiss();
-            this.update();
+            setTimeout(() => {
+              this.showRatingModal().then(() => {
+                this.update();
+              });  
+            });
           }, err => {
             loading.dismiss();
             this.toastCtrl.create({
@@ -100,4 +108,25 @@ export class HomePage {
       }).present();
     });
   }
+
+  showRatingModal(): Promise<any> {
+    return this.modalCtrl.create(RatingModal, {}, {cssClass: 'rating-popup'}).present();
+  }
+}
+
+@Component({
+  selector: 'rating-modal',
+  templateUrl: 'rating-modal.html'
+})
+export class RatingModal {
+
+ constructor(params: NavParams, public viewCtrl: ViewController, public aac: AACAuth, public attendance: AttendanceService) {
+ }
+
+ onModelChange(event) {
+   this.aac.getAccessToken().then(tokenData => {
+     this.attendance.rate(event, tokenData.access_token);
+     this.viewCtrl.dismiss();
+   }); 
+ }
 }
