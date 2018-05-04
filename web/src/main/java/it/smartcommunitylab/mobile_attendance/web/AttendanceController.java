@@ -60,6 +60,8 @@ public class AttendanceController {
                     pattern = "yyyy-MM-dd'T'HH:mm:ss") Date toTimestamp,
             Pageable pageRequest) {
         String account = SecurityContextHolder.getContext().getAuthentication().getName();
+        // FIX the account could not be the mail when I read the view in db
+        account = account.replace("@fbk.eu", "");
         return attendanceSrv.readByRange(account, fromTimestamp, toTimestamp, pageRequest);
     }
 
