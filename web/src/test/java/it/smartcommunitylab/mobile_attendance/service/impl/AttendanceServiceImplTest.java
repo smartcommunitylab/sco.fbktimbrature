@@ -2,7 +2,6 @@ package it.smartcommunitylab.mobile_attendance.service.impl;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
@@ -17,7 +16,7 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Bean;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -26,7 +25,9 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import it.smartcommunitylab.mobile_attendance.model.Attendance;
+import it.smartcommunitylab.mobile_attendance.model.AttendanceRead;
 import it.smartcommunitylab.mobile_attendance.persistence.AttendanceEntity;
+import it.smartcommunitylab.mobile_attendance.persistence.AttendanceReadRepository;
 import it.smartcommunitylab.mobile_attendance.persistence.AttendanceRepository;
 import it.smartcommunitylab.mobile_attendance.service.AttendanceService;
 
@@ -39,8 +40,11 @@ public class AttendanceServiceImplTest {
     @Autowired
     private AttendanceService attendanceSrv;
 
-    @Autowired
+    @MockBean
     private AttendanceRepository attendanceRepo;
+
+    @MockBean
+    private AttendanceReadRepository attendanceReadRepo;
 
     @Test
     public void store_attendance() {
@@ -67,7 +71,7 @@ public class AttendanceServiceImplTest {
     @Test
     public void read_a_page_attendance_of_an_account_with_default_sorting() {
 
-        when(attendanceRepo.findByAccount("account",
+        when(attendanceReadRepo.findByAccount("account",
                 PageRequest.of(0, 5, new Sort(Direction.DESC, "timestamp"))))
                         .then(new Answer<Page<AttendanceEntity>>() {
                             @Override
@@ -88,7 +92,7 @@ public class AttendanceServiceImplTest {
                             }
                         });
 
-        Page<Attendance> page = attendanceSrv.read("account", PageRequest.of(0, 5));
+        Page<AttendanceRead> page = attendanceSrv.read("account", PageRequest.of(0, 5));
         assertThat(page).hasSize(2).first().hasFieldOrPropertyWithValue("timestamp",
                 convert("2018-04-17T00:10"));
     }
@@ -96,7 +100,7 @@ public class AttendanceServiceImplTest {
     @Test
     public void read_a_page_attendance_of_an_account_with_explicit_sorting() {
 
-        when(attendanceRepo.findByAccount("account",
+        when(attendanceReadRepo.findByAccount("account",
                 PageRequest.of(0, 5, new Sort(Direction.DESC, "timestamp"))))
                         .then(new Answer<Page<AttendanceEntity>>() {
                             @Override
@@ -117,7 +121,7 @@ public class AttendanceServiceImplTest {
                             }
                         });
 
-        when(attendanceRepo.findByAccount("account",
+        when(attendanceReadRepo.findByAccount("account",
                 PageRequest.of(0, 5, new Sort(Direction.ASC, "timestamp"))))
                         .then(new Answer<Page<AttendanceEntity>>() {
                             @Override
@@ -139,7 +143,7 @@ public class AttendanceServiceImplTest {
                         });
 
 
-        Page<Attendance> page = attendanceSrv.read("account",
+        Page<AttendanceRead> page = attendanceSrv.read("account",
                 PageRequest.of(0, 5, new Sort(Direction.ASC, "timestamp")));
         assertThat(page).hasSize(2).first().hasFieldOrPropertyWithValue("timestamp",
                 convert("2018-04-17T00:00"));
@@ -150,8 +154,8 @@ public class AttendanceServiceImplTest {
     @Test
     public void read_a_page_attendance_of_an_account_in_a_complete_range() {
 
-        when(attendanceRepo.findByAccountAndTimestampBetween("account", convert("2018-04-16T11:20"),
-                convert("2018-04-17T11:20"),
+        when(attendanceReadRepo.findByAccountAndTimestampBetween("account",
+                convert("2018-04-16T11:20"), convert("2018-04-17T11:20"),
                 PageRequest.of(0, 5, Sort.by(Direction.DESC, "timestamp"))))
                         .then(new Answer<Page<AttendanceEntity>>() {
                             @Override
@@ -167,16 +171,16 @@ public class AttendanceServiceImplTest {
                             }
                         });
 
-        Page<Attendance> page = attendanceSrv.readByRange("account", convert("2018-04-16T11:20"),
-                convert("2018-04-17T11:20"), PageRequest.of(0, 5));
+        Page<AttendanceRead> page = attendanceSrv.readByRange("account",
+                convert("2018-04-16T11:20"), convert("2018-04-17T11:20"), PageRequest.of(0, 5));
         assertThat(page).hasSize(1).first().hasFieldOrPropertyWithValue("timestamp",
                 convert("2018-04-17T00:00"));
     }
 
     @Test
     public void read_a_page_attendance_of_an_account_from_start_to_timestamp() {
-        when(attendanceRepo.findByAccountAndTimestampBetween("account", convert("2018-04-16T11:20"),
-                convert("2018-04-18T11:20"),
+        when(attendanceReadRepo.findByAccountAndTimestampBetween("account",
+                convert("2018-04-16T11:20"), convert("2018-04-18T11:20"),
                 PageRequest.of(0, 5, Sort.by(Direction.DESC, "timestamp"))))
                         .then(new Answer<Page<AttendanceEntity>>() {
                             @Override
@@ -192,7 +196,7 @@ public class AttendanceServiceImplTest {
                             }
                         });
 
-        when(attendanceRepo.findByAccountAndTimestampLessThanEqual("account",
+        when(attendanceReadRepo.findByAccountAndTimestampLessThanEqual("account",
                 convert("2018-04-18T11:20"),
                 PageRequest.of(0, 5, Sort.by(Direction.DESC, "timestamp"))))
                         .then(new Answer<Page<AttendanceEntity>>() {
@@ -209,7 +213,7 @@ public class AttendanceServiceImplTest {
                             }
                         });
 
-        Page<Attendance> page = attendanceSrv.readByRange("account", null,
+        Page<AttendanceRead> page = attendanceSrv.readByRange("account", null,
                 convert("2018-04-18T11:20"), PageRequest.of(0, 5));
         assertThat(page).hasSize(1).first().hasFieldOrPropertyWithValue("timestamp",
                 convert("2018-04-17T08:00"));
@@ -217,7 +221,7 @@ public class AttendanceServiceImplTest {
 
     @Test
     public void read_a_page_attendance_of_an_account_from_timestamp_to_end() {
-        when(attendanceRepo.findByAccountAndTimestampGreaterThanEqual("account",
+        when(attendanceReadRepo.findByAccountAndTimestampGreaterThanEqual("account",
                 convert("2018-04-11T11:20"),
                 PageRequest.of(0, 5, Sort.by(Direction.DESC, "timestamp"))))
                         .then(new Answer<Page<AttendanceEntity>>() {
@@ -234,8 +238,8 @@ public class AttendanceServiceImplTest {
                             }
                         });
 
-        Page<Attendance> page = attendanceSrv.readByRange("account", convert("2018-04-11T11:20"),
-                null, PageRequest.of(0, 5));
+        Page<AttendanceRead> page = attendanceSrv.readByRange("account",
+                convert("2018-04-11T11:20"), null, PageRequest.of(0, 5));
         assertThat(page).hasSize(1).first().hasFieldOrPropertyWithValue("timestamp",
                 convert("2018-04-17T00:00"));
     }
@@ -245,12 +249,4 @@ public class AttendanceServiceImplTest {
                 .from(LocalDateTime.parse(dateString).atZone(ZoneId.systemDefault()).toInstant());
     }
 
-    @org.springframework.boot.test.context.TestConfiguration
-    public static class TestConfiguration {
-
-        @Bean
-        public AttendanceRepository attendanceRepo() {
-            return mock(AttendanceRepository.class);
-        }
-    }
 }
