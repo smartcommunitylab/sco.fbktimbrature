@@ -64,7 +64,7 @@ public class AACAuthenticationInterceptor extends HandlerInterceptorAdapter {
                 response.sendError(HttpServletResponse.SC_FORBIDDEN, "not a FBK account");
                 logger.warn("Try to use an account not FBK: {}", email);
                 passRequest = false;
-            } else if (!hasAttendanceScope(getAction(request), token)) {
+            } else if (isAttendanceApi(request) && !hasAttendanceScope(getAction(request), token)) {
                 response.sendError(HttpServletResponse.SC_FORBIDDEN,
                         "not the right security scope");
                 logger.warn("Token has not scope: {}", getAction(request) == Action.READ
@@ -84,6 +84,9 @@ public class AACAuthenticationInterceptor extends HandlerInterceptorAdapter {
         return passRequest;
     }
 
+    private boolean isAttendanceApi(HttpServletRequest request) {
+        return request.getRequestURI().toLowerCase().contains("attendance");
+    }
 
     private String extractToken(HttpServletRequest request) {
         String authHeaderValue = request.getHeader("Authorization");
