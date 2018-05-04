@@ -1,38 +1,51 @@
 <configuration>
-	
-  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-    <!-- encoders are assigned the type
-         ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
-    <encoder>
-      <pattern>%date{dd-MM-yyyy HH:mm:ss.SSS} %-5level [%logger{0}] - %msg%n</pattern>
-    </encoder>
-  </appender>
-  
-  
-  
-  <springProfile name="dev">
-	 <root level="INFO">
-    <appender-ref ref="STDOUT" />
-  </root>
-  </springProfile>
-  
-  
-  <springProfile name="prod">
-  
-   <appender name="ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
-    <file>${LOG_FOLDER:-.}/mobile-attendance.log</file>
-    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-      <fileNamePattern>${LOG_FOLDER:-.}/mobile-attendance.%d{yyyy-MM-dd}.log</fileNamePattern>
-    </rollingPolicy>
 
-    <encoder>
-      <pattern>%date{dd-MM-yyyy HH:mm:ss.SSS} %-5level [%logger{0}] - %msg%n</pattern>
-    </encoder>
-  </appender> 
-	 <root level="INFO">
-    <appender-ref ref="STDOUT" />
-    <appender-ref ref="ROLLING" />
-  </root>
-  </springProfile>
- 
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<!-- encoders are assigned the type ch.qos.logback.classic.encoder.PatternLayoutEncoder 
+			by default -->
+		<encoder>
+			<pattern>%date{dd-MM-yyyy HH:mm:ss.SSS} %-5level [%logger{0}] - %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="RATING" class="ch.qos.logback.core.FileAppender">
+		<file>${LOG_FOLDER:-.}/rating.log</file>
+		<append>true</append>
+		<encoder>
+			<pattern>%msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<springProfile name="dev">
+		<root level="INFO">
+			<appender-ref ref="STDOUT" />
+		</root>
+	</springProfile>
+
+
+	<springProfile name="prod">
+
+		<appender name="ROLLING"
+			class="ch.qos.logback.core.rolling.RollingFileAppender">
+			<file>${LOG_FOLDER:-.}/mobile-attendance.log</file>
+			<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+				<fileNamePattern>${LOG_FOLDER:-.}/mobile-attendance.%d{yyyy-MM-dd}.log</fileNamePattern>
+			</rollingPolicy>
+
+			<encoder>
+				<pattern>%date{dd-MM-yyyy HH:mm:ss.SSS} %-5level [%logger{0}] - %msg%n</pattern>
+			</encoder>
+		</appender>
+
+		<logger name="ratingLog" additivity="false">
+			<appender-ref ref="RATING" />
+		</logger>
+		
+		
+		<root level="INFO">
+			<appender-ref ref="STDOUT" />
+			<appender-ref ref="ROLLING" />
+		</root>
+	</springProfile>
+
 </configuration>
