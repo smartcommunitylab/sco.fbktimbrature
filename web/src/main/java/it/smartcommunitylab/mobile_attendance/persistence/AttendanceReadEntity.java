@@ -25,8 +25,8 @@ public class AttendanceReadEntity implements AttendanceRead {
     @Column(name = "tipo_timbratura")
     private String mode;
 
-    // @Column(name = "DataInvio")
-    // private Date inazRegistrationTimestamp;
+    @Column(name = "datainvio")
+    private Date inazRegistrationTimestamp;
 
     public String getAccount() {
         return account;
@@ -51,14 +51,14 @@ public class AttendanceReadEntity implements AttendanceRead {
     public void setMode(String mode) {
         this.mode = mode;
     }
-    //
-    // public Date getInazRegistrationTimestamp() {
-    // return inazRegistrationTimestamp;
-    // }
-    //
-    // public void setInazRegistrationTimestamp(Date inazRegistrationTimestamp) {
-    // this.inazRegistrationTimestamp = inazRegistrationTimestamp;
-    // }
+
+    public Date getInazRegistrationTimestamp() {
+        return inazRegistrationTimestamp;
+    }
+
+    public void setInazRegistrationTimestamp(Date inazRegistrationTimestamp) {
+        this.inazRegistrationTimestamp = inazRegistrationTimestamp;
+    }
 
     public Long getId() {
         return id;
