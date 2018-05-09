@@ -13,7 +13,8 @@ export class AttendanceRecord {
   constructor(
     public id: number,
     public account: string,
-    public timestamp: string
+    public timestamp: string,
+    public mode: string
   ) {
 
   }
@@ -98,7 +99,8 @@ export class AttendanceService {
             id: i+1,
             title: this.translate.instant('notification_title'),
             text: this.translate.instant('notification_text'),
-            trigger: {at: ms.toDate()}
+            trigger: {at: ms.toDate()},
+            smallIcon: 'res://notification.png'
           });
         }
         ms.add(1, 'days');

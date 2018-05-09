@@ -26,8 +26,12 @@ export class LocationChecker {
     checkLocation(): Promise<boolean> {
         return new Promise((resolve, reject) => {
           console.log('checking');
+          const to = setTimeout(() => {
+            reject(ERR_MSG[ERR_LOCATION]);
+          }, 20000);
           // check mock location settings disabled
           (<any>window).plugins.mocklocationchecker.check((res) => {
+            clearTimeout(to);
             // if disabled, check current location
             if ('true' !== (''+res) && !Array.from(res).some((e:any) => e.info === 'mock-true')) {
               console.log('Mock verified: ok');
@@ -52,6 +56,7 @@ export class LocationChecker {
               reject(ERR_MSG[ERR_MOCK_LOCATION]);
             }
           }, (err) => {
+            clearTimeout(to);
             // failed to check location settings: report error
             reject(ERR_MSG[ERR_LOCATION]);
           });

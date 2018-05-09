@@ -23,6 +23,9 @@
       <ion-item *ngFor="let item of group.dayRecords">
         <ion-icon name="time" item-start></ion-icon>
         {{item.timestamp | date:'HH:mm'}}
+        <ion-note item-end>
+        {{(item.mode !== 'mobile' ? item.mode : 'app') | titlecase}}
+        </ion-note>      
       </ion-item>
       <ion-item class="missing" *ngIf="!group.dayRecords || group.dayRecords.length == 0">
         <ion-icon name="time" item-start></ion-icon>
