@@ -299,7 +299,7 @@ export class AACAuth {
 
     private isExpired(data: AACTokenData): boolean {
         // give margin of 1 hour
-        if (data.expires_on && data.expires_on < new Date().getTime() - 1000*60*60) {
+        if (data.expires_on && data.expires_on < (new Date().getTime() + 1000*60*60)) {
             return true;
         }
         return false;
