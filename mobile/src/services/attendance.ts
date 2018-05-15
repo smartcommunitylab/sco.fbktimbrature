@@ -78,7 +78,7 @@ export class AttendanceService {
 
     clearSchedule() {
       window.localStorage.schedule = '';
-      this.localNotifications.clearAll();
+      this.localNotifications.cancelAll();
     }
 
     getCurrentSchedule(): string {
@@ -86,7 +86,6 @@ export class AttendanceService {
     }
 
     scheduleAt(hour: number, minute: number, from?: Date) {
-      this.localNotifications.clearAll();
       const notifications = [];
       let ms = from ? moment(from) : moment();
       ms.startOf('day');
@@ -106,7 +105,10 @@ export class AttendanceService {
         ms.add(1, 'days');
         i++;
       }
-      this.localNotifications.schedule(notifications);
+      this.localNotifications.cancelAll(() => {
+        console.log('cancelled all');
+        this.localNotifications.schedule(notifications);        
+      });
       window.localStorage.schedule = ms.format('HH:mm');
     }
 

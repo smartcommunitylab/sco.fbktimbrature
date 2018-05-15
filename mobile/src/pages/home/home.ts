@@ -6,6 +6,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { LocationChecker } from '../../services/location';
 import { AttendanceService, AttendanceRecord } from '../../services/attendance';
 
+import * as moment from 'moment';
 @Component({
   selector: 'page-home',
   templateUrl: 'home.html'
@@ -28,6 +29,12 @@ export class HomePage {
     this.update();
     this.profile = this.auth.getStoredBasicProfile();
     setInterval(()=> this.now = new Date(), 60000);
+    this.platform.resume.subscribe(() => {
+      if (moment().isAfter(moment(this.now),'day')) {
+        this.now = new Date();
+        this.update();      
+      }
+    });
   }
 
   update() {
