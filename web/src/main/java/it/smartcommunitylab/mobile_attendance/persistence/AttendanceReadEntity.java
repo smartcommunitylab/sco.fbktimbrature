@@ -16,7 +16,7 @@ public class AttendanceReadEntity implements AttendanceRead {
     @Id
     private Long id;
 
-    @Column(name = "Login")
+    @Column(name = "Email")
     private String account;
 
     @Column(name = "Date")
