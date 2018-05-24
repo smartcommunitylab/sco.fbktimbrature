@@ -14,7 +14,10 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import it.smartcommunitylab.mobile_attendance.model.Attendance;
+import it.smartcommunitylab.mobile_attendance.model.AttendanceRead;
 import it.smartcommunitylab.mobile_attendance.persistence.AttendanceEntity;
+import it.smartcommunitylab.mobile_attendance.persistence.AttendanceReadEntity;
+import it.smartcommunitylab.mobile_attendance.persistence.AttendanceReadRepository;
 import it.smartcommunitylab.mobile_attendance.persistence.AttendanceRepository;
 import it.smartcommunitylab.mobile_attendance.service.AttendanceService;
 
@@ -23,6 +26,9 @@ public class AttendanceServiceImpl implements AttendanceService {
 
     @Autowired
     private AttendanceRepository attendanceRepo;
+
+    @Autowired
+    private AttendanceReadRepository attendanceReadRepo;
 
     @Override
     public Attendance store(String account, Date timestamp) {
@@ -33,35 +39,41 @@ public class AttendanceServiceImpl implements AttendanceService {
     }
 
     @Override
-    public Page<Attendance> read(String account, Pageable pageRequest) {
-        Page<AttendanceEntity> pageEntities =
-                attendanceRepo.findByAccount(account, setDefaultSortIfNothing(pageRequest));
-        return convertToAttendance(pageEntities);
+    public Page<AttendanceRead> read(String account, Pageable pageRequest) {
+        Page<AttendanceReadEntity> pageEntities =
+                attendanceReadRepo.findByAccount(account, setDefaultSortIfNothing(pageRequest));
+        return convertToAttendanceRead(pageEntities);
     }
 
     @Override
-    public Page<Attendance> readByRange(String account, Date fromTimestamp, Date toTimestamp,
+    public Page<AttendanceRead> readByRange(String account, Date fromTimestamp, Date toTimestamp,
             Pageable pageRequest) {
         Pageable defaultPageRequest = setDefaultSortIfNothing(pageRequest);
-        Page<AttendanceEntity> pageEntities = null;
+        Page<AttendanceReadEntity> pageEntities = null;
         if (fromTimestamp != null && toTimestamp != null) {
-            pageEntities = attendanceRepo.findByAccountAndTimestampBetween(account, fromTimestamp,
-                    toTimestamp, defaultPageRequest);
+            pageEntities = attendanceReadRepo.findByAccountAndTimestampBetween(account,
+                    fromTimestamp, toTimestamp, defaultPageRequest);
         } else if (fromTimestamp != null) {
-            pageEntities = attendanceRepo.findByAccountAndTimestampGreaterThanEqual(account,
+            pageEntities = attendanceReadRepo.findByAccountAndTimestampGreaterThanEqual(account,
                     fromTimestamp, defaultPageRequest);
         } else if (toTimestamp != null) {
-            pageEntities = attendanceRepo.findByAccountAndTimestampLessThanEqual(account,
+            pageEntities = attendanceReadRepo.findByAccountAndTimestampLessThanEqual(account,
                     toTimestamp, defaultPageRequest);
         } else {
             return read(account, defaultPageRequest);
         }
-        return convertToAttendance(pageEntities);
+        return convertToAttendanceRead(pageEntities);
     }
 
     private Page<Attendance> convertToAttendance(Page<AttendanceEntity> pageEntities) {
         List<Attendance> attendances = new ArrayList<>(pageEntities.getContent());
         return new PageImpl<Attendance>(attendances, pageEntities.getPageable(),
+                pageEntities.getTotalElements());
+    }
+
+    private Page<AttendanceRead> convertToAttendanceRead(Page<AttendanceReadEntity> pageEntities) {
+        List<AttendanceRead> attendances = new ArrayList<>(pageEntities.getContent());
+        return new PageImpl<AttendanceRead>(attendances, pageEntities.getPageable(),
                 pageEntities.getTotalElements());
     }
 
