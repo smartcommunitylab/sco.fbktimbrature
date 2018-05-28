@@ -116,7 +116,7 @@ export class AttendanceService {
       if (!!window.localStorage.schedule) {
         const pattern = window.localStorage.schedule;
         const parsed = moment(pattern, 'HH:mm');
-        this.scheduleAt(parsed.hours(), parsed.minutes(), moment().endOf('day').toDate());
+        this.scheduleAt(parsed.hours(), parsed.minutes(), moment().startOf('day').add(1, 'days').toDate());
       } 
     }
 }

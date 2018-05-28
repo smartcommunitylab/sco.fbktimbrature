@@ -102,8 +102,8 @@
     <plugin name="cordova-plugin-geolocation" spec="~2.4.3">
         <variable name="GEOLOCATION_USAGE_DESCRIPTION" value="To locate you" />
     </plugin>
-    <plugin name="cordova-plugin-networkinterface" spec="~2.0.0" />
     <plugin name="cordova-plugin-local-notification" spec="~0.9.0-beta.2" />
     <engine name="android" spec="~6.2.2" />
     <plugin name="cordova.plugins.diagnostic" spec="~4.0.5" />
+    <plugin name="nl.nielsad.cordova.wifiscanner" spec="https://github.com/nielsAD/cordova-wifiscanner.git" />
 </widget>

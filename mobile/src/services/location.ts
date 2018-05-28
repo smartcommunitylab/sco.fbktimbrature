@@ -16,8 +16,10 @@ const ERR_NETWORK_MISMATCH = 3;
 const ERR_LOCATION_MISMATCH = 4;
 const ERR_MSG = ['err_check_location', 'err_network', 'err_mock_location', 'err_network_mismatch', 'err_location_mismatch'];
 
-const TARGET_POSITION = [46.067454, 11.150735];
-const MAX_DISTANCE = 1;
+
+const TARGET_POSITION = [[46.067454, 11.150735],[46.062766, 11.124421]];
+const TARGET_NETWORKS = ['eduroam', 'GuestsFbk'];
+const MAX_DISTANCE = .5;
 
 @Injectable()
 export class LocationChecker {
@@ -37,15 +39,15 @@ export class LocationChecker {
               console.log('Mock verified: ok');
               const pos: any = Array.from(res).find((e: any) => e.lat && e.long);
               if (pos) {
-                const dist = this.calculateDistance(pos.lat, TARGET_POSITION[0], pos.long, TARGET_POSITION[1]);
-                if (dist < MAX_DISTANCE) resolve(true);
+                const matching = TARGET_POSITION.some((tp) => this.calculateDistance(pos.lat, tp[0], pos.long, tp[1]) < MAX_DISTANCE);
+                if (matching) this.checkNetwork(resolve, reject);
                 else reject(ERR_MSG[ERR_LOCATION_MISMATCH]);
                 return;
               }
               this.geo.getCurrentPosition({timeout: 20000}).then((pos) => {
                 console.log(pos);
-                const dist = this.calculateDistance(pos.coords.latitude, TARGET_POSITION[0], pos.coords.longitude, TARGET_POSITION[1]);
-                if (dist < MAX_DISTANCE) resolve(true);
+                const matching = TARGET_POSITION.some((tp) => this.calculateDistance(pos.coords.latitude, tp[0], pos.coords.longitude, tp[1]) < MAX_DISTANCE);
+                if (matching) this.checkNetwork(resolve, reject);
                 else reject(ERR_MSG[ERR_LOCATION_MISMATCH]);
               }).catch((err) => {
                 console.error('location err', err);
@@ -81,5 +83,18 @@ export class LocationChecker {
         let a = 0.5 - c((lat1-lat2) * p) / 2 + c(lat2 * p) *c((lat1) * p) * (1 - c(((long1- long2) * p))) / 2;
         let dis = (12742 * Math.asin(Math.sqrt(a))); // 2 * R; R = 6371 km
         return dis;
+      }
+
+      private checkNetwork(resolve, reject) {
+        (window['navigator'] as any).wifi.getAccessPoints((scan: any[]) => {
+          console.log(scan);
+          const arr = TARGET_NETWORKS.slice();
+          scan.forEach((ap) => arr.splice(arr.indexOf(ap.SSID)), 1);
+          if (arr.length > 0) reject(ERR_MSG[ERR_NETWORK_MISMATCH]);
+          else resolve(true);
+        }, (scanErr) => {
+          console.log(scanErr);
+          reject(ERR_MSG[ERR_NETWORK]);
+        });
       }
 }
