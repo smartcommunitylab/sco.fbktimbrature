@@ -18,6 +18,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import it.smartcommunitylab.mobile_attendance.model.Attendance;
+import it.smartcommunitylab.mobile_attendance.model.AttendanceRead;
 import it.smartcommunitylab.mobile_attendance.service.AttendanceService;
 
 @RestController
@@ -52,7 +53,7 @@ public class AttendanceController {
             @ApiImplicitParam(name = "size", dataType = "integer", paramType = "query",
                     value = "Number of Records per page."),})
     @ApiOperation("Read attendances")
-    public Page<Attendance> read(
+    public Page<AttendanceRead> read(
             @RequestParam(required = false, name = "fromTs") @DateTimeFormat(
                     pattern = "yyyy-MM-dd'T'HH:mm:ss") Date fromTimestamp,
             @RequestParam(required = false, name = "toTs") @DateTimeFormat(

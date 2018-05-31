@@ -18,7 +18,7 @@ public class AttendanceEntity implements Attendance {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @Column(name = "Login")
+    @Column(name = "Email")
     private String account;
 
     @Column(name = "Date")
