@@ -166,12 +166,16 @@ export class AACAuth {
      * @param provider 
      */
     login(provider: string): Promise<AACTokenData> {
-        return this.auth(provider, this.clientConfig).then(tokenData => {
-            this.getBasicProfile().then(profile => {
-                window.localStorage._aac_profile = JSON.stringify(profile);
+        console.log('loginin');
+        return new Promise((resolve, reject) => {
+            this.auth(provider, this.clientConfig).then(tokenData => {
+                console.log('read profile');
+                this.getBasicProfile().then(profile => {
+                    window.localStorage._aac_profile = JSON.stringify(profile);
+                    resolve(tokenData);
+                }, err => reject(err));
             });
-            return tokenData;
-        });
+        })
     }
 
     /**
